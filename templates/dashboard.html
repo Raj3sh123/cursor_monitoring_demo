@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard · Server Monitor{% endblock %}
+
+{% block content %}
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h1 class="h3 mb-1">Dashboard</h1>
+      <p class="text-secondary mb-0">Linux server metrics will appear here.</p>
+    </div>
+  </div>
+
+  <div class="alert alert-info" role="status">
+    No live data yet. Add a server in a later step to start monitoring.
+  </div>
+
+  <div class="row g-3 mb-4">
+    <div class="col-sm-6 col-xl-3">
+      <div class="card metric-card h-100">
+        <div class="card-body">
+          <p class="metric-label">CPU</p>
+          <p class="metric-value">—</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+      <div class="card metric-card h-100">
+        <div class="card-body">
+          <p class="metric-label">Memory</p>
+          <p class="metric-value">—</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+      <div class="card metric-card h-100">
+        <div class="card-body">
+          <p class="metric-label">Network</p>
+          <p class="metric-value">—</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+      <div class="card metric-card h-100">
+        <div class="card-body">
+          <p class="metric-label">Listening ports</p>
+          <p class="metric-value">—</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">Servers</div>
+    <div class="card-body text-secondary">
+      No servers registered.
+    </div>
+  </div>
+{% endblock %}

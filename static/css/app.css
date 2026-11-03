@@ -1,0 +1,17 @@
+body {
+  background: #f4f6f8;
+}
+
+.metric-label {
+  margin: 0;
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #6c757d;
+}
+
+.metric-value {
+  margin: 0.35rem 0 0;
+  font-size: 1.75rem;
+  font-weight: 600;
+}
