@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+
+{% block title %}{{ server.name }} · Server Monitor{% endblock %}
+
+{% block content %}
+  <div id="server-page" data-refresh-ms="{{ metrics.refresh_ms }}" data-metrics-url="{{ url_for('server_metrics', server_id=server.id) }}">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+      <div>
+        <p class="mb-1"><a href="{{ url_for('dashboard') }}">Dashboard</a></p>
+        <h1 class="h3 mb-1" id="server-name">{{ server.name }}</h1>
+        <p class="text-secondary mb-0">IP <span id="server-ip">{{ server.ip }}</span> · metrics are read-only</p>
+      </div>
+      <div class="d-flex gap-2">
+        <a class="btn btn-outline-secondary" href="{{ url_for('export_csv', server_id=server.id) }}">Export CSV</a>
+        <form method="post" action="{{ url_for('delete_server', server_id=server.id) }}" onsubmit="return confirm('Remove this server?');">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+          <button class="btn btn-outline-danger" type="submit">Remove</button>
+        </form>
+      </div>
+    </div>
+
+    <div id="metrics-error" class="alert alert-danger {% if not metrics.error %}d-none{% endif %}" role="alert">
+      {{ metrics.error or "" }}
+    </div>
+    <div id="metrics-alert" class="alert alert-warning {% if not metrics.alert %}d-none{% endif %}" role="status">
+      CPU is above 80% or memory is above 85%.
+    </div>
+
+    <div class="row g-3 mb-4">
+      <div class="col-sm-6 col-xl-3">
+        <div class="card metric-card h-100">
+          <div class="card-body">
+            <p class="metric-label">CPU</p>
+            <p class="metric-value" id="cpu-value">{{ metrics.cpu_display }}</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-6 col-xl-3">
+        <div class="card metric-card h-100">
+          <div class="card-body">
+            <p class="metric-label">Memory</p>
+            <p class="metric-value" id="mem-value">{{ metrics.memory.percent_display }}</p>
+            <p class="text-secondary small mb-0" id="mem-detail">{{ metrics.memory.used_display }} used of {{ metrics.memory.total_display }}</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-6 col-xl-3">
+        <div class="card metric-card h-100">
+          <div class="card-body">
+            <p class="metric-label">Available memory</p>
+            <p class="metric-value" id="mem-available">{{ metrics.memory.available_display }}</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-6 col-xl-3">
+        <div class="card metric-card h-100">
+          <div class="card-body">
+            <p class="metric-label">Status</p>
+            <p class="metric-value"><span id="status-badge" class="badge {{ status_class(metrics.status) }}">{{ metrics.status }}</span></p>
+            <p class="text-secondary small mb-0">Updated <span id="collected-at">{{ metrics.collected_at or "—" }}</span></p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card mb-4">
+      <div class="card-header">CPU and memory history</div>
+      <div class="card-body">
+        <div class="chart-wrap">
+          <canvas id="history-chart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-lg-6">
+        <div class="card h-100">
+          <div class="card-header">Network</div>
+          <div class="table-responsive">
+            <table class="table mb-0" id="network-table">
+              <thead>
+                <tr>
+                  <th>Interface</th>
+                  <th>RX</th>
+                  <th>TX</th>
+                  <th>RX rate</th>
+                  <th>TX rate</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for row in metrics.network %}
+                  <tr>
+                    <td>{{ row.iface }}</td>
+                    <td>{{ row.rx_display }}</td>
+                    <td>{{ row.tx_display }}</td>
+                    <td>{{ row.rx_rate_display }}</td>
+                    <td>{{ row.tx_rate_display }}</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          <p id="network-empty" class="text-secondary px-3 py-3 mb-0 {% if metrics.network %}d-none{% endif %}">No interface data.</p>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="card h-100">
+          <div class="card-header">Listening ports</div>
+          <div class="table-responsive">
+            <table class="table mb-0" id="ports-table">
+              <thead>
+                <tr>
+                  <th>Protocol</th>
+                  <th>Address</th>
+                  <th>Port</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for row in metrics.ports %}
+                  <tr>
+                    <td>{{ row.proto }}</td>
+                    <td>{{ row.address }}</td>
+                    <td>{{ row.port }}</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          <p id="ports-empty" class="text-secondary px-3 py-3 mb-0 {% if metrics.ports %}d-none{% endif %}">No listening ports reported.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script id="initial-metrics" type="application/json">{{ metrics | tojson }}</script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="{{ url_for('static', filename='js/server.js') }}"></script>
+{% endblock %}

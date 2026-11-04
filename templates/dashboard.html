@@ -6,53 +6,62 @@
   <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
       <h1 class="h3 mb-1">Dashboard</h1>
-      <p class="text-secondary mb-0">Linux server metrics will appear here.</p>
+      <p class="text-secondary mb-0">Linux servers registered for monitoring.</p>
     </div>
   </div>
 
-  <div class="alert alert-info" role="status">
-    No live data yet. Add a server in a later step to start monitoring.
-  </div>
-
-  <div class="row g-3 mb-4">
-    <div class="col-sm-6 col-xl-3">
-      <div class="card metric-card h-100">
-        <div class="card-body">
-          <p class="metric-label">CPU</p>
-          <p class="metric-value">—</p>
+  <div class="card mb-4">
+    <div class="card-header">Add server</div>
+    <div class="card-body">
+      {% if form_error %}
+        <div class="alert alert-danger" role="alert">{{ form_error }}</div>
+      {% endif %}
+      <form method="post" action="{{ url_for('add_server') }}" class="row g-3">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+        <div class="col-md-5">
+          <label class="form-label" for="name">Name</label>
+          <input class="form-control" id="name" name="name" maxlength="64" value="{{ form_name }}" required>
         </div>
-      </div>
-    </div>
-    <div class="col-sm-6 col-xl-3">
-      <div class="card metric-card h-100">
-        <div class="card-body">
-          <p class="metric-label">Memory</p>
-          <p class="metric-value">—</p>
+        <div class="col-md-5">
+          <label class="form-label" for="ip">IP address</label>
+          <input class="form-control" id="ip" name="ip" value="{{ form_ip }}" placeholder="192.0.2.10" required>
         </div>
-      </div>
-    </div>
-    <div class="col-sm-6 col-xl-3">
-      <div class="card metric-card h-100">
-        <div class="card-body">
-          <p class="metric-label">Network</p>
-          <p class="metric-value">—</p>
+        <div class="col-md-2 d-flex align-items-end">
+          <button class="btn btn-primary w-100" type="submit">Add</button>
         </div>
-      </div>
-    </div>
-    <div class="col-sm-6 col-xl-3">
-      <div class="card metric-card h-100">
-        <div class="card-body">
-          <p class="metric-label">Listening ports</p>
-          <p class="metric-value">—</p>
-        </div>
-      </div>
+      </form>
     </div>
   </div>
 
   <div class="card">
     <div class="card-header">Servers</div>
-    <div class="card-body text-secondary">
-      No servers registered.
-    </div>
+    {% if servers %}
+      <div class="table-responsive">
+        <table class="table table-hover mb-0 align-middle">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>IP</th>
+              <th>CPU</th>
+              <th>Memory</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for server in servers %}
+              <tr>
+                <td><a href="{{ url_for('server_detail', server_id=server.id) }}">{{ server.name }}</a></td>
+                <td>{{ server.ip }}</td>
+                <td>{{ server.cpu_display }}</td>
+                <td>{{ server.mem_display }}</td>
+                <td><span class="badge {{ status_class(server.status) }}">{{ server.status }}</span></td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <div class="card-body text-secondary">No servers registered.</div>
+    {% endif %}
   </div>
 {% endblock %}

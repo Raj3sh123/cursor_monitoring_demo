@@ -13,58 +13,58 @@ Small increments for local demo (`python app.py`). Check items in order. Each st
 
 ## 2. Sign-in and unit tests
 
-- [ ] Add login page (username + password) and logout
-- [ ] Seed one user: `admin` / `admin123` with a hashed password (Werkzeug)
-- [ ] Session cookie; redirect unauthenticated users to login
-- [ ] Add `pytest` tests: good login, bad password, protected route redirects
-- [ ] **Security:** store password hash only; generic login error; `SECRET_KEY` from env (dev default only locally)
-- [ ] **Docs:** README — default login and that the password is hashed
+- [x] Add login page (username + password) and logout
+- [x] Seed one user: `admin` / `admin123` with a hashed password (Werkzeug)
+- [x] Session cookie; redirect unauthenticated users to login
+- [x] Add `pytest` tests: good login, bad password, protected route redirects
+- [x] **Security:** store password hash only; generic login error; `SECRET_KEY` from env (dev default only locally)
+- [x] **Docs:** README — default login and that the password is hashed
 
 ## 3. CI (GitHub Actions)
 
-- [ ] Add `.github/workflows/ci.yml`: install deps, run `pytest` on push/PR
-- [ ] **Security:** no secrets in the workflow; tests use a temp SQLite DB
-- [ ] **Docs:** README — CI runs tests on GitHub
+- [x] Add `.github/workflows/ci.yml`: install deps, run `pytest` on push/PR
+- [x] **Security:** no secrets in the workflow; tests use a temp SQLite DB
+- [x] **Docs:** README — CI runs tests on GitHub
 
 ## 4. SQLite persistence
 
-- [ ] Add SQLite init for `users` and `servers`
-- [ ] Create admin user on first run if missing
-- [ ] **Security:** DB file gitignored; parameterized queries only
-- [ ] **Docs:** README — DB file path
+- [x] Add SQLite init for `users` and `servers`
+- [x] Create admin user on first run if missing
+- [x] **Security:** DB file gitignored; parameterized queries only
+- [x] **Docs:** README — DB file path
 
 ## 5. Add and remove servers
 
-- [ ] Add server form: **name** + **IP** only; save and list on dashboard
-- [ ] Remove server action; detail page stub
-- [ ] **Security:** login required; validate name length and IP format; CSRF on forms
-- [ ] **Docs:** README — how to add a server
+- [x] Add server form: **name** + **IP** only; save and list on dashboard
+- [x] Remove server action; detail page stub
+- [x] **Security:** login required; validate name length and IP format; CSRF on forms
+- [x] **Docs:** README — how to add a server
 
 ## 6. SSH metric collection
 
-- [ ] Add shared SSH settings via env: `SSH_USER`, `SSH_KEY_PATH` (or `SSH_PASSWORD`)
-- [ ] Collect CPU, memory, network, listening ports (Paramiko); fail with a message if SSH fails
-- [ ] Show values on the server page (read-only)
-- [ ] **Security:** credentials only in env; no SSH fields in the UI; no shell input from the user
-- [ ] **Docs:** README — set `SSH_USER` and key path
+- [x] Add shared SSH settings via env: `SSH_USER`, `SSH_KEY_PATH` (or `SSH_PASSWORD`)
+- [x] Collect CPU, memory, network, listening ports (Paramiko); fail with a message if SSH fails
+- [x] Show values on the server page (read-only)
+- [x] **Security:** credentials only in env; no SSH fields in the UI; no shell input from the user
+- [x] **Docs:** README — set `SSH_USER` and key path
 
 ## 7. Auto-refresh
 
-- [ ] JSON endpoint for one server’s latest metrics
-- [ ] Refresh the detail page every 5s via fetch
-- [ ] **Security:** endpoint requires login; return only that server’s metrics
-- [ ] **Docs:** README — refresh interval
+- [x] JSON endpoint for one server’s latest metrics
+- [x] Refresh the detail page every 5s via fetch
+- [x] **Security:** endpoint requires login; return only that server’s metrics
+- [x] **Docs:** README — refresh interval
 
 ## 8. Alerts, history, and CSV export
 
-- [ ] Store last 60 samples; badge when CPU > 80% or memory > 85%
-- [ ] CPU and memory line chart (Chart.js)
-- [ ] CSV download of recent samples
-- [ ] **Security:** login required; CSV contains metrics only (no secrets)
-- [ ] **Docs:** README — thresholds, history size, export button
+- [x] Store last 60 samples; badge when CPU > 80% or memory > 85%
+- [x] CPU and memory line chart (Chart.js)
+- [x] CSV download of recent samples
+- [x] **Security:** login required; CSV contains metrics only (no secrets)
+- [x] **Docs:** README — thresholds, history size, export button
 
 ## 9. Finish local demo
 
-- [ ] Confirm `python app.py` on this machine: login → add server → live metrics
-- [ ] **Security:** confirm `.env` and `*.db` are not committed
-- [ ] **Docs:** README matches the steps above
+- [x] Confirm `python app.py` on this machine: login → add server → live metrics
+- [x] **Security:** confirm `.env` and `*.db` are not committed
+- [x] **Docs:** README matches the steps above
