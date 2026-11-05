@@ -125,7 +125,7 @@ def test_invalid_ip_is_rejected(client):
 
 
 def test_metrics_require_login_and_are_scoped(client, monkeypatch):
-    monkeypatch.setattr("app.collect_metrics", lambda ip: _sample_metrics(91.0, 90.0))
+    monkeypatch.setattr("collector.collect_metrics", lambda ip: _sample_metrics(91.0, 90.0))
     logged_out = client.get("/servers/1/metrics")
     assert logged_out.status_code == 401
 
@@ -152,7 +152,7 @@ def test_metrics_require_login_and_are_scoped(client, monkeypatch):
 
 
 def test_csv_contains_metrics_only(client, monkeypatch):
-    monkeypatch.setattr("app.collect_metrics", lambda ip: _sample_metrics())
+    monkeypatch.setattr("collector.collect_metrics", lambda ip: _sample_metrics())
     _login(client)
     client.get("/")
     client.post(
@@ -173,7 +173,7 @@ def test_csv_contains_metrics_only(client, monkeypatch):
 
 
 def test_history_keeps_last_60_samples(client, monkeypatch):
-    monkeypatch.setattr("app.collect_metrics", lambda ip: _sample_metrics())
+    monkeypatch.setattr("collector.collect_metrics", lambda ip: _sample_metrics())
     _login(client)
     client.get("/")
     client.post(
@@ -186,9 +186,36 @@ def test_history_keeps_last_60_samples(client, monkeypatch):
     assert len(samples) == HISTORY_LIMIT
 
 
+def test_metrics_accept_bearer_token(client, app, monkeypatch):
+    monkeypatch.setattr("collector.collect_metrics", lambda ip: _sample_metrics())
+    _login(client)
+    client.get("/")
+    client.post(
+        "/servers",
+        data={"name": "jwt", "ip": "192.0.2.40", "csrf_token": _csrf(client)},
+    )
+    with client.session_transaction() as sess:
+        token = sess["access_token"]
+    anonymous = app.test_client()
+    response = anonymous.get(
+        "/servers/1/metrics",
+        headers={"Authorization": f"Bearer {token}"},
+    )
+    payload = response.get_json()
+    assert response.status_code == 200
+    assert payload["server"]["name"] == "jwt"
+    assert token not in response.get_data(as_text=True)
+    spec = anonymous.get("/api/openapi.json")
+    assert spec.status_code == 200
+    document = spec.get_data(as_text=True)
+    assert "/servers/{server_id}/metrics" in document
+    assert "admin123" not in document
+    assert "SECRET" not in document
+
+
 def test_ssh_failure_is_shown(client, monkeypatch):
     monkeypatch.setattr(
-        "app.collect_metrics",
+        "collector.collect_metrics",
         lambda ip: {"ok": False, "error": "SSH authentication failed."},
     )
     _login(client)

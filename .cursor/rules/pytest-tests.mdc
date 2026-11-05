@@ -1,0 +1,29 @@
+---
+description: Pytest patterns for the monitoring app
+globs: "**/*.py"
+alwaysApply: false
+---
+
+# Pytest
+
+Tests live in `tests/` and use the `create_app` factory with a temporary database.
+
+- Build the app with `TESTING`, a test `SECRET_KEY`, and `DATABASE` under `tmp_path`. Do not use `monitor.db`.
+- Sign in through the test client with a CSRF token from the session (`_login` / `_csrf`).
+- Assert status codes and stable response text. For login failures, assert the password is absent from the body.
+- Patch `collector.collect_metrics` when a route would open SSH. Parser tests call `parse_metrics_output` with a fixed sample string.
+- Cover the new behavior: success, a rejected input, and the unauthenticated path when the route is protected.
+
+```python
+# ❌ BAD
+def test_dashboard():
+    app = create_app()  # uses the real monitor.db
+    client = app.test_client()
+    assert client.get("/").status_code == 200
+
+# ✅ GOOD
+def test_protected_route_redirects(client):
+    response = client.get("/")
+    assert response.status_code == 302
+    assert response.headers["Location"].endswith("/login")
+```

@@ -1,0 +1,26 @@
+---
+description: Fixed SSH metric command and safe errors
+globs: "**/*.py"
+alwaysApply: false
+---
+
+# SSH collection
+
+Metric collection uses one fixed remote command. Server name and IP are never inserted into a shell string.
+
+- Keep the remote command in `METRICS_COMMAND`. Pass it to `exec_command` unchanged.
+- Validate the host with `is_valid_ip` before connecting. Use the IP only as Paramiko's `hostname`.
+- Read SSH credentials from the environment. Do not add SSH fields to forms or JSON responses.
+- On failure, return `{"ok": False, "error": message}`. Do not raise out of `collect_metrics`.
+- Scrub `SSH_PASSWORD` and `SSH_KEY_PATH` from exception text before returning it (`_public_error`).
+- Leave `allow_agent` and `look_for_keys` as `False`.
+
+```python
+# ❌ BAD
+client.exec_command(f"ss -lntu | grep {ip}")
+
+# ✅ GOOD
+_stdin, stdout, _stderr = client.exec_command(METRICS_COMMAND, timeout=15)
+output = stdout.read().decode("utf-8", "replace")
+return parse_metrics_output(output)
+```

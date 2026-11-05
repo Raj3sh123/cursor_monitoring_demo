@@ -1,0 +1,31 @@
+---
+description: Python style for the monitoring app
+globs: "**/*.py"
+alwaysApply: false
+---
+
+# Python style
+
+Match the existing modules: small functions, module-level constants, and a short module docstring.
+
+- Keep route handlers in `app.py`, SQL in `db.py`, and SSH parsing in `collector.py`.
+- Prefix helpers that are not part of the public API with `_`.
+- Import the standard library first, then third-party packages, then local modules.
+- Return plain dicts from `db` and `collector`. Do not add classes for rows or metric payloads.
+- Name thresholds and limits as module constants (`HISTORY_LIMIT`, `CPU_ALERT_PERCENT`).
+
+```python
+# ❌ BAD
+class Server:
+    def __init__(self, row):
+        self.name = row["name"]
+
+# ✅ GOOD
+def get_server(path, server_id):
+    with connect(path) as conn:
+        row = conn.execute(
+            "SELECT id, name, ip, created_at FROM servers WHERE id = ?",
+            (server_id,),
+        ).fetchone()
+    return dict(row) if row else None
+```

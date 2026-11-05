@@ -75,7 +75,7 @@ def _idle(times):
     return idle
 
 
-def parse_meminfo(text):
+def _parse_meminfo(text):
     values = {}
     for line in text.splitlines():
         if ":" not in line:
@@ -97,7 +97,7 @@ def parse_meminfo(text):
     }
 
 
-def parse_netdev(text):
+def _parse_netdev(text):
     rows = []
     for line in text.splitlines():
         if ":" not in line:
@@ -166,12 +166,12 @@ def parse_metrics_output(output):
     if len(cpu_lines) < 2:
         return _fail("Could not read CPU usage from the host.")
     try:
-        memory = parse_meminfo(mem_part)
+        memory = _parse_meminfo(mem_part)
         parsed = {
             "ok": True,
             "error": None,
             "cpu_percent": cpu_percent(cpu_lines[0], cpu_lines[1]),
-            "network": parse_netdev(net_part),
+            "network": _parse_netdev(net_part),
             "ports": parse_ports(port_part),
         }
         parsed.update(memory)
