@@ -13,12 +13,12 @@
 <body>
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container">
-      <a class="navbar-brand" href="{{ url_for('dashboard') }}">Server Monitor</a>
+      <a class="navbar-brand" href="{{ url_for('servers.dashboard') }}">Server Monitor</a>
       <span class="badge text-bg-secondary">Demo</span>
       <div class="ms-auto d-flex align-items-center gap-3">
         {% if current_user %}
           <span class="navbar-text text-white-50">{{ current_user }}</span>
-          <form method="post" action="{{ url_for('logout') }}" class="m-0">
+          <form method="post" action="{{ url_for('auth.logout') }}" class="m-0">
             <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
             <button type="submit" class="btn btn-outline-light btn-sm">Log out</button>
           </form>

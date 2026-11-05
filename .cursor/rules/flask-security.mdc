@@ -1,0 +1,33 @@
+---
+description: Flask auth, CSRF, and local-only binding
+globs: "**/*.py"
+alwaysApply: false
+---
+
+# Flask security
+
+This app is a localhost demo. Protected pages require a session, and state-changing forms require CSRF.
+
+- Decorate pages and JSON routes that show or change servers with `@login_required`.
+- Call `_require_csrf()` at the start of every `POST` handler. Compare tokens with `secrets.compare_digest`.
+- Read `SECRET_KEY`, `DATABASE`, `SSH_USER`, `SSH_KEY_PATH`, and `SSH_PASSWORD` from the environment. Do not hard-code new secrets.
+- Bind `app.run` to `127.0.0.1`. Do not set `debug=True`.
+- Login failures stay generic: `Invalid username or password.` Do not echo the submitted password.
+- Store only Werkzeug password hashes. Never log or return `password_hash`.
+
+```python
+# ❌ BAD
+@app.post("/servers/<int:server_id>/delete")
+def delete_server(server_id):
+    db.delete_server(database(), server_id)
+    return redirect(url_for("dashboard"))
+
+# ✅ GOOD
+@app.post("/servers/<int:server_id>/delete")
+@login_required
+def delete_server(server_id):
+    _require_csrf()
+    if not db.delete_server(database(), server_id):
+        abort(404)
+    return redirect(url_for("dashboard"))
+```

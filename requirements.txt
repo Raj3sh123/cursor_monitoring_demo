@@ -1,3 +1,9 @@
 Flask>=3.0,<4
+Flask-RESTful>=0.3.10,<0.4
+Flask-JWT-Extended>=4.6,<5
+Flask-Caching>=2.3,<3
+marshmallow>=3.20,<4
+flasgger>=0.9.7.1,<0.10
+gunicorn>=22,<24
 paramiko>=3.4,<5
 pytest>=8.0,<9

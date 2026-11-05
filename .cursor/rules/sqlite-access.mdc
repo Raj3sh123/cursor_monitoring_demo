@@ -1,0 +1,26 @@
+---
+description: Parameterized SQLite access through db.py
+globs: "**/*.py"
+alwaysApply: false
+---
+
+# SQLite access
+
+All database work goes through `db.py` and the `connect()` context manager.
+
+- Pass values as bound parameters. Do not build SQL with f-strings, `%`, or string concatenation.
+- Keep `PRAGMA foreign_keys = ON`. Let `connect()` commit, roll back, and close.
+- Return `dict(row)` or a list of dicts. Return `None` when a single row is missing.
+- Trim `metric_samples` to `HISTORY_LIMIT` (60) per server inside `add_sample`.
+- Timestamps use `utc_now()` (`datetime.now(timezone.utc).isoformat`).
+
+```python
+# ❌ BAD
+conn.execute(f"DELETE FROM servers WHERE id = {server_id}")
+
+# ✅ GOOD
+def delete_server(path, server_id):
+    with connect(path) as conn:
+        cursor = conn.execute("DELETE FROM servers WHERE id = ?", (server_id,))
+        return cursor.rowcount > 0
+```

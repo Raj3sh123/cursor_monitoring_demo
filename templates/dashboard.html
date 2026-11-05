@@ -16,7 +16,7 @@
       {% if form_error %}
         <div class="alert alert-danger" role="alert">{{ form_error }}</div>
       {% endif %}
-      <form method="post" action="{{ url_for('add_server') }}" class="row g-3">
+      <form method="post" action="{{ url_for('servers.add_server') }}" class="row g-3">
         <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
         <div class="col-md-5">
           <label class="form-label" for="name">Name</label>
@@ -50,7 +50,7 @@
           <tbody>
             {% for server in servers %}
               <tr>
-                <td><a href="{{ url_for('server_detail', server_id=server.id) }}">{{ server.name }}</a></td>
+                <td><a href="{{ url_for('servers.server_detail', server_id=server.id) }}">{{ server.name }}</a></td>
                 <td>{{ server.ip }}</td>
                 <td>{{ server.cpu_display }}</td>
                 <td>{{ server.mem_display }}</td>

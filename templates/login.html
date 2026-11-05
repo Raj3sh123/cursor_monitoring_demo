@@ -12,7 +12,7 @@
           {% if error %}
             <div class="alert alert-danger" role="alert">{{ error }}</div>
           {% endif %}
-          <form method="post" action="{{ url_for('login_post') }}">
+          <form method="post" action="{{ url_for('auth.login_post') }}">
             <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
             <div class="mb-3">
               <label class="form-label" for="username">Username</label>

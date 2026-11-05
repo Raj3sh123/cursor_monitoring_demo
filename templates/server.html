@@ -6,13 +6,13 @@
   <div id="server-page" data-refresh-ms="{{ metrics.refresh_ms }}" data-metrics-url="{{ url_for('server_metrics', server_id=server.id) }}">
     <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
       <div>
-        <p class="mb-1"><a href="{{ url_for('dashboard') }}">Dashboard</a></p>
+        <p class="mb-1"><a href="{{ url_for('servers.dashboard') }}">Dashboard</a></p>
         <h1 class="h3 mb-1" id="server-name">{{ server.name }}</h1>
         <p class="text-secondary mb-0">IP <span id="server-ip">{{ server.ip }}</span> · metrics are read-only</p>
       </div>
       <div class="d-flex gap-2">
-        <a class="btn btn-outline-secondary" href="{{ url_for('export_csv', server_id=server.id) }}">Export CSV</a>
-        <form method="post" action="{{ url_for('delete_server', server_id=server.id) }}" onsubmit="return confirm('Remove this server?');">
+        <a class="btn btn-outline-secondary" href="{{ url_for('servers.export_csv', server_id=server.id) }}">Export CSV</a>
+        <form method="post" action="{{ url_for('servers.delete_server', server_id=server.id) }}" onsubmit="return confirm('Remove this server?');">
           <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
           <button class="btn btn-outline-danger" type="submit">Remove</button>
         </form>
